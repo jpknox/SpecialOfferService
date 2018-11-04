@@ -1,15 +1,19 @@
-package com.jpknox.item.offer;
+package com.jpknox.item.offer.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jpknox.io.property.PropertyUtil;
 import com.jpknox.item.Purchasable;
+import com.jpknox.item.offer.Criteria;
+import com.jpknox.item.offer.PriceDeductible;
+import com.jpknox.item.offer.Reduction;
+import com.jpknox.item.offer.SpecialOffer;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Properties;
-import java.util.function.Function;
 
 /**
  * Created by joaok on 03/11/2018.
@@ -22,39 +26,41 @@ public class SpecialOfferService {
 		initOffers();
 	}
 
-	public void applyReductions(List<Purchasable> items) {
-		List<Function<PriceDeductible, Boolean>> possibleReductions = new ArrayList();
+	public List<ReductionOperation> applyReductions(List<Purchasable> items) {
+		List<ReductionOperation> possibleReductions = new ArrayList();
 		for (SpecialOffer offer : offersFromProperties) {
 			possibleReductions.addAll(
 					getApplicableReductions(items, offer)
 			);
 		}
 
-		List<Function<PriceDeductible, Boolean>> appliedReductions = new ArrayList();
-		List<Function<PriceDeductible, Boolean>> reductionsToRemove = new ArrayList();
+		List<ReductionOperation> appliedReductions = new ArrayList();
+		List<ReductionOperation> reductionsToRemove = new ArrayList();
 		items.stream().filter(p -> p instanceof PriceDeductible).forEach(p -> {
 			reductionsToRemove.clear();
-			for (Function<PriceDeductible, Boolean> reduction : possibleReductions) {
+			for (ReductionOperation reduction : possibleReductions) {
 				PriceDeductible pd = (PriceDeductible) p;
-				boolean applied = reduction.apply((PriceDeductible) p);
-				if (applied) {
+				BigDecimal difference = reduction.getReduction().apply((PriceDeductible) p);
+				if (difference.compareTo(BigDecimal.ZERO) > 0) {
+					reduction.setReductionAmount(difference);
 					appliedReductions.add(reduction);
 					reductionsToRemove.add(reduction);
 				}
 			}
 			possibleReductions.removeAll(reductionsToRemove);
 		});
+		return appliedReductions;
 	}
 
-	public List<Function<PriceDeductible, Boolean>> getApplicableReductions(
+	public List<ReductionOperation> getApplicableReductions(
 			List<Purchasable> items, SpecialOffer offer) {
 		// Multiple criteria must be checked for whole special offer.
 		// Lowest number of matches dictates the number of reductions possible for this offer.
 		int criteriaSatisfied[] = new int[offer.getCriterias().length];
-		List<Function<PriceDeductible, Boolean>> possibleReductions = new ArrayList();
+		List<ReductionOperation> possibleReductions = new ArrayList();
 		int criteriaBeingAssessed = 0;
 		for (Criteria criteria : offer.getCriterias()) {
-			int numberOfMatches = (int) items.stream()
+			int numberOfMatches = (int) items.stream() //Downcasting floors the floating point number
 					.filter((p) -> p.getName().equalsIgnoreCase(criteria.getName()))
 					.count()
 					/ criteria.getQuantity();
@@ -68,17 +74,19 @@ public class SpecialOfferService {
 		while (numberOfApplicableReductions-- > 0) {
 			for (Reduction reduction : offer.getReductions()) {
 				possibleReductions.add(
-						(pd) -> {
-							if (!pd.getPriceDeducted() &&
-									pd.getName().equalsIgnoreCase(reduction.getName())) {
-								pd.setPrice(
-										pd.getPrice().subtract(
-												pd.getPrice().multiply(reduction.getAmount())));
-								pd.setPriceDeducted(true);
-								return true;
-							}
-							return false;
-						}
+						new ReductionOperation(
+								offer.getDescription(),
+								(pd) -> {
+									if (!pd.getPriceDeducted() &&
+											pd.getName().equalsIgnoreCase(reduction.getName())) {
+										BigDecimal difference = pd.getPrice().multiply(reduction.getAmount());
+										pd.setPrice(pd.getPrice().subtract(difference));
+										pd.setPriceDeducted(true);
+										return difference;
+									}
+									return BigDecimal.ZERO;
+								}
+						)
 				);
 			}
 		}

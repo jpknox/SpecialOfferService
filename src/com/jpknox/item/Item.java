@@ -9,15 +9,25 @@ import java.math.BigDecimal;
  */
 public class Item implements Purchasable, PriceDeductible {
 
-	private BigDecimal price;
 	private String name;
-	private String offerCategory;
+	private BigDecimal price;
 	private boolean priceDeducted;
 
-	public Item(BigDecimal price, String name, String offerCategory) {
-		this.price = price;
+	public Item() {
+	}
+
+	public Item(String name, BigDecimal price) {
 		this.name = name;
-		this.offerCategory = offerCategory;
+		this.price = price;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
@@ -31,23 +41,6 @@ public class Item implements Purchasable, PriceDeductible {
 	}
 
 	@Override
-	public String getName() {
-		return name;
-	}
-
-	public String getOfferCategory() {
-		return offerCategory;
-	}
-
-	@Override
-	public void deductFromPrice(BigDecimal deduction) {
-		price = price.subtract(deduction).setScale(2, BigDecimal.ROUND_UP);
-		if (price.compareTo(BigDecimal.ZERO) < 0) {
-			price = BigDecimal.ZERO;
-		}
-	}
-
-	@Override
 	public boolean getPriceDeducted() {
 		return priceDeducted;
 	}
@@ -55,5 +48,12 @@ public class Item implements Purchasable, PriceDeductible {
 	@Override
 	public void setPriceDeducted(boolean deducted) {
 		this.priceDeducted = deducted;
+	}
+
+	public Item cloneOf(Item item) {
+		Item clone = new Item();
+		clone.setName(getName());
+		clone.setPrice(getPrice());
+		return clone;
 	}
 }

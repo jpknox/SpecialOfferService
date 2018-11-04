@@ -9,12 +9,8 @@ import java.math.BigDecimal;
  */
 public interface PriceDeductible extends Purchasable {
 
-	void deductFromPrice(BigDecimal deduction);
-
 	boolean getPriceDeducted();
 
 	void setPriceDeducted(boolean deducted);
-
-	String getOfferCategory();
 
 }

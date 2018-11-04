@@ -1,12 +1,5 @@
 package com.jpknox.item.offer;
 
-import com.jpknox.item.Purchasable;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Function;
-
 /**
  * Created by joaok on 04/11/2018.
  */

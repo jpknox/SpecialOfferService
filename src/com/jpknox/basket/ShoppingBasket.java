@@ -3,9 +3,8 @@ package com.jpknox.basket;
 import com.jpknox.basket.display.Receipt;
 import com.jpknox.basket.price.TotalPriceCalculator;
 import com.jpknox.item.Purchasable;
-import com.jpknox.item.offer.SpecialOfferService;
+import com.jpknox.item.offer.service.SpecialOfferService;
 
-import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,13 +26,11 @@ public class ShoppingBasket {
 		items.remove(item);
 	}
 
-	public Receipt getTotal() {
+	public Receipt getReceipt() {
 		Receipt receipt = new Receipt();
-		BigDecimal subtotal = priceCalculator.calculateTotalPrice(items);
-		receipt.setSubtotal(subtotal);
-		offerService.applyReductions(items);
-		BigDecimal total = priceCalculator.calculateTotalPrice(items);
-		receipt.setTotal(total);
+		receipt.setSubtotal(priceCalculator.calculateTotalPrice(items));
+		receipt.setAppliedOffers(offerService.applyReductions(items));
+		receipt.setTotal(priceCalculator.calculateTotalPrice(items));
 		return receipt;
 	}
 

@@ -15,11 +15,10 @@ public class Main {
         ItemFactory itemFactory = new ItemFactory();
         basket.addItem(itemFactory.create("Jacket"));
         basket.addItem(itemFactory.create("Trousers"));
-//        basket.addItem(itemFactory.create("Shirt"));
-//        basket.addItem(itemFactory.create("Shirt"));
+        basket.addItem(itemFactory.create("Shirt"));
+        basket.addItem(itemFactory.create("Shirt"));
         basket.addItem(itemFactory.create("Tie"));
-        System.out.println(String.format("Subtotal:\t%s.", basket.getTotal().getSubtotal()));
-        System.out.println(String.format("Total:\t%s.", basket.getTotal().getTotal()));
+        System.out.println(basket.getReceipt());
     }
 
 }
