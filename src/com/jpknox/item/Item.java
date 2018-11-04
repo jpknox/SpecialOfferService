@@ -50,7 +50,7 @@ public class Item implements Purchasable, PriceDeductible {
 		this.priceDeducted = deducted;
 	}
 
-	public Item cloneOf(Item item) {
+	public Item cloneOf() {
 		Item clone = new Item();
 		clone.setName(getName());
 		clone.setPrice(getPrice());

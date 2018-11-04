@@ -18,7 +18,7 @@ public class ItemFactory {
 		if (item == null) {
 			return new Item("Error: Unknown Item, " + name, BigDecimal.ZERO);
 		} else {
-			return item;
+			return item.cloneOf();
 		}
 	}
 

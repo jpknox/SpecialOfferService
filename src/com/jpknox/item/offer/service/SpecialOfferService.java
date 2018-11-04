@@ -2,6 +2,7 @@ package com.jpknox.item.offer.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jpknox.io.property.PropertyUtil;
+import com.jpknox.item.Item;
 import com.jpknox.item.Purchasable;
 import com.jpknox.item.offer.Criteria;
 import com.jpknox.item.offer.PriceDeductible;
@@ -36,7 +37,7 @@ public class SpecialOfferService {
 
 		List<ReductionOperation> appliedReductions = new ArrayList();
 		List<ReductionOperation> reductionsToRemove = new ArrayList();
-		items.stream().filter(p -> p instanceof PriceDeductible).forEach(p -> {
+		items.stream().filter(p -> p instanceof PriceDeductible).forEach( p -> {
 			reductionsToRemove.clear();
 			for (ReductionOperation reduction : possibleReductions) {
 				PriceDeductible pd = (PriceDeductible) p;

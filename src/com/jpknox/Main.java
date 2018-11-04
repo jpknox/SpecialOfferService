@@ -15,6 +15,7 @@ public class Main {
         ItemFactory itemFactory = new ItemFactory();
         basket.addItem(itemFactory.create("Jacket"));
         basket.addItem(itemFactory.create("Trousers"));
+        basket.addItem(itemFactory.create("Trousers"));
         basket.addItem(itemFactory.create("Shirt"));
         basket.addItem(itemFactory.create("Shirt"));
         basket.addItem(itemFactory.create("Tie"));
