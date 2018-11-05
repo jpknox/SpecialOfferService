@@ -19,7 +19,7 @@ public class ShoppingBasket {
 
 	public void addItem(Purchasable item) {
 		items.add(item);
-		System.out.println(String.format("Added %s to shopping basket.", item.getName()));
+		System.out.println(String.format("Added \"%s\" to shopping basket.", item.getName()));
 	}
 
 	public void removeItem(Purchasable item) {

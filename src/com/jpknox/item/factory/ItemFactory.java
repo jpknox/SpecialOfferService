@@ -16,7 +16,7 @@ public class ItemFactory {
 	public Item create(String name) {
 		Item item = catalogue.get(name);
 		if (item == null) {
-			return new Item("Error: Unknown Item, " + name, BigDecimal.ZERO);
+			return new Item(String.format("Error: Unknown Item '%s'", name), BigDecimal.ZERO);
 		} else {
 			return item.cloneOf();
 		}

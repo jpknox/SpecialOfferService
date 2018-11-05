@@ -1,38 +1,38 @@
 package com.jpknox.item.offer.service;
 
 import com.jpknox.item.offer.PriceDeductible;
+import com.jpknox.item.offer.Reduction;
 
 import java.math.BigDecimal;
+import java.util.Comparator;
 import java.util.function.Function;
 
 /**
  * Created by joaok on 04/11/2018.
  */
-public class ReductionOperation {
+public class ReductionOperation implements Comparable<ReductionOperation> {
 
 	private String description;
-	private Function<PriceDeductible, BigDecimal> reduction;
+	private Reduction reduction;
+	private Function<PriceDeductible, BigDecimal> function;
 	private BigDecimal reductionAmount;
 
-	public ReductionOperation(String description, Function<PriceDeductible, BigDecimal> reduction) {
+	public ReductionOperation(String description, Reduction reduction, Function<PriceDeductible, BigDecimal> function) {
 		this.description = description;
 		this.reduction = reduction;
+		this.function = function;
 	}
 
 	public String getDescription() {
 		return description;
 	}
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
-
-	public Function<PriceDeductible, BigDecimal> getReduction() {
+	public Reduction getReduction() {
 		return reduction;
 	}
 
-	public void setReduction(Function<PriceDeductible, BigDecimal> reduction) {
-		this.reduction = reduction;
+	public Function<PriceDeductible, BigDecimal> getFunction() {
+		return function;
 	}
 
 	public BigDecimal getReductionAmount() {
@@ -43,5 +43,9 @@ public class ReductionOperation {
 		this.reductionAmount = reductionAmount;
 	}
 
-
+	@Override
+	public int compareTo(ReductionOperation o) {
+		//Sort by most crucial component of this class.
+		return getReduction().compareTo(o.getReduction());
+	}
 }

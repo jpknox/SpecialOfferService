@@ -2,7 +2,6 @@ package com.jpknox.item.offer.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jpknox.io.property.PropertyUtil;
-import com.jpknox.item.Item;
 import com.jpknox.item.Purchasable;
 import com.jpknox.item.offer.Criteria;
 import com.jpknox.item.offer.PriceDeductible;
@@ -11,10 +10,7 @@ import com.jpknox.item.offer.SpecialOffer;
 
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by joaok on 03/11/2018.
@@ -35,13 +31,16 @@ public class SpecialOfferService {
 			);
 		}
 
+		//Sort so most significant reductions are applied first.
+		Collections.sort(possibleReductions, Collections.reverseOrder());
+
 		List<ReductionOperation> appliedReductions = new ArrayList();
 		List<ReductionOperation> reductionsToRemove = new ArrayList();
 		items.stream().filter(p -> p instanceof PriceDeductible).forEach( p -> {
 			reductionsToRemove.clear();
 			for (ReductionOperation reduction : possibleReductions) {
 				PriceDeductible pd = (PriceDeductible) p;
-				BigDecimal difference = reduction.getReduction().apply((PriceDeductible) p);
+				BigDecimal difference = reduction.getFunction().apply((PriceDeductible) p);
 				if (difference.compareTo(BigDecimal.ZERO) > 0) {
 					reduction.setReductionAmount(difference);
 					appliedReductions.add(reduction);
@@ -77,6 +76,7 @@ public class SpecialOfferService {
 				possibleReductions.add(
 						new ReductionOperation(
 								offer.getDescription(),
+								reduction,
 								(pd) -> {
 									if (!pd.getPriceDeducted() &&
 											pd.getName().equalsIgnoreCase(reduction.getName())) {
