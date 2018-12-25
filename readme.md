@@ -1,0 +1,1 @@
+A working special offer service capable of having a dynamic set products and special offers in its catalogue enabled by property injection.

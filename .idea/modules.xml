@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/anatwine.iml" filepath="$PROJECT_DIR$/anatwine.iml" />
+      <module fileurl="file://$PROJECT_DIR$/SpecialOfferService.iml" filepath="$PROJECT_DIR$/SpecialOfferService.iml" />
     </modules>
   </component>
 </project>
